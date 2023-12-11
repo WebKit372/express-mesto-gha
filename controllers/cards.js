@@ -41,7 +41,7 @@ module.exports.likeCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Передан некорректный формат' });
+        res.status(400).send({ message: 'Передан некорректный формат' });
       } else if (err.message === 'NotFound') {
         res.status(404).send({ message: 'Карточка не найдена' });
       } else {
@@ -59,7 +59,7 @@ module.exports.dislikeCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Передан некорректный формат' });
+        res.status(400).send({ message: 'Передан некорректный формат' });
       } else if (err.message === 'NotFound') {
         res.status(404).send({ message: 'Карточка не найдена' });
       } else {
