@@ -19,9 +19,17 @@ module.exports.createCard = (req, res) => {
 };
 module.exports.deleteCard = (req, res) => {
   Cards.findByIdAndDelete(req.params.id)
-    .orFail(() => res.status(404).send({ message: 'Карточка не найдена' }))
+    .orFail(() => new Error('NotFound'))
     .then((card) => res.send({ data: card }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Передан некорректный формат' });
+      } else if (err.message === 'NotFound') {
+        res.status(404).send({ message: 'Карточка не найдена' });
+      } else {
+        res.status(500).send({ message: 'Ошибка сервера' });
+      }
+    });
 };
 module.exports.likeCard = (req, res) => {
   Cards.findByIdAndUpdate(

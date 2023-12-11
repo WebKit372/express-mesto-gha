@@ -7,11 +7,13 @@ module.exports.getUsers = (req, res) => {
 };
 module.exports.getUsersId = (req, res) => {
   Users.findById(req.params.id)
-    .orFail(() => res.status(404).send({ message: 'Пользователь не найден' }))
+    .orFail(() => new Error('NotFound'))
     .then((users) => res.send({ data: users }))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Передан некорректный формат' });
+      } else if (err.message === 'NotFound') {
+        res.status(404).send({ message: 'Пользователь не найден' });
       } else {
         res.status(500).send({ message: 'Ошибка сервера' });
       }
