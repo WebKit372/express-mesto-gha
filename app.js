@@ -16,5 +16,8 @@ app.use(bodyParser.json());
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
+app.use('/*', (req, res) => {
+  res.status(404).send({ message: 'Неккоретный путь' });
+});
 app.listen(PORT, () => {
 });
