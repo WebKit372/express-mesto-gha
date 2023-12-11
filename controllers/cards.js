@@ -19,6 +19,7 @@ module.exports.createCard = (req, res) => {
 };
 module.exports.deleteCard = (req, res) => {
   Cards.findByIdAndDelete(req.params.id)
+    .orFail(() => res.status(404).send({ message: 'Карточка не найдена' }))
     .then((card) => res.send({ data: card }))
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
