@@ -1,19 +1,20 @@
 const Cards = require('../models/cards');
+const errorStatus = require('../utils/constants');
 
 module.exports.getCards = (req, res) => {
   Cards.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(500).send(errorStatus.default));
 };
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   Cards.create({ name, link, owner: req.user._id })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Передан некорректный формат' });
+        res.status(400).send(errorStatus.validationError);
       } else {
-        res.status(500).send({ message: 'Ошибка сервера' });
+        res.status(500).send(errorStatus.default);
       }
     });
 };
@@ -23,11 +24,11 @@ module.exports.deleteCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Передан некорректный формат' });
+        res.status(400).send(errorStatus.castError);
       } else if (err.message === 'NotFound') {
-        res.status(404).send({ message: 'Карточка не найдена' });
+        res.status(404).send(errorStatus.notFoundCard);
       } else {
-        res.status(500).send({ message: 'Ошибка сервера' });
+        res.status(500).send(errorStatus.default);
       }
     });
 };
@@ -41,11 +42,11 @@ module.exports.likeCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Передан некорректный формат' });
+        res.status(400).send(errorStatus.castError);
       } else if (err.message === 'NotFound') {
-        res.status(404).send({ message: 'Карточка не найдена' });
+        res.status(404).send(errorStatus.notFoundCard);
       } else {
-        res.status(500).send({ message: 'Ошибка сервера' });
+        res.status(500).send(errorStatus.default);
       }
     });
 };
@@ -59,11 +60,11 @@ module.exports.dislikeCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Передан некорректный формат' });
+        res.status(400).send(errorStatus.castError);
       } else if (err.message === 'NotFound') {
-        res.status(404).send({ message: 'Карточка не найдена' });
+        res.status(404).send(errorStatus.notFoundCard);
       } else {
-        res.status(500).send({ message: 'Ошибка сервера' });
+        res.status(500).send(errorStatus.default);
       }
     });
 };

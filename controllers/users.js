@@ -1,4 +1,5 @@
 const Users = require('../models/users');
+const errorStatus = require('../utils/constants');
 
 module.exports.getUsers = (req, res) => {
   Users.find({})
@@ -11,23 +12,23 @@ module.exports.getUsersId = (req, res) => {
     .then((users) => res.send({ data: users }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Передан некорректный формат' });
+        res.status(400).send(errorStatus.castError);
       } else if (err.message === 'NotFound') {
-        res.status(404).send({ message: 'Пользователь не найден' });
+        res.status(404).send(errorStatus.notFoundUser);
       } else {
-        res.status(500).send({ message: 'Ошибка сервера' });
+        res.status(500).send(errorStatus.default);
       }
     });
 };
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   Users.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Передан некорректный формат' });
+        res.status(400).send(errorStatus.validationError);
       } else {
-        res.status(500).send({ message: 'Ошибка сервера' });
+        res.status(500).send(errorStatus.default);
       }
     });
 };
@@ -44,12 +45,12 @@ module.exports.updateUser = (req, res) => {
       runValidators: true,
     },
   )
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Передан некорректный формат' });
+        res.status(400).send(errorStatus.validationError);
       } else {
-        res.status(500).send({ message: 'Ошибка сервера' });
+        res.status(500).send(errorStatus.default);
       }
     });
 };
@@ -68,9 +69,9 @@ module.exports.updateUserAvatar = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Передан некорректный формат' });
+        res.status(400).send(errorStatus.validationError);
       } else {
-        res.status(500).send({ message: 'Ошибка сервера' });
+        res.status(500).send(errorStatus.default);
       }
     });
 };

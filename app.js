@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const errorStatus = require('./utils/constants');
 
 const app = express();
 const { PORT = 3000 } = process.env;
@@ -17,7 +18,7 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use('/*', (req, res) => {
-  res.status(404).send({ message: 'Неккоретный путь' });
+  res.status(404).send(errorStatus.wrongWay);
 });
 app.listen(PORT, () => {
 });
