@@ -19,17 +19,22 @@ module.exports.createCard = (req, res) => {
     });
 };
 module.exports.deleteCard = (req, res) => {
-  Cards.findByIdAndDelete(req.params.id)
-    .orFail(() => new Error('NotFound'))
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send(errorStatus.castError);
-      } else if (err.message === 'NotFound') {
-        res.status(404).send(errorStatus.notFoundCard);
-      } else {
-        res.status(500).send(errorStatus.default);
+  Cards.findById(req.params.id)
+    .then((deletedCard) => {
+      if (deletedCard.owner.toString() !== req.user._id) {
+        console.log(deletedCard.owner.toString());
+        console.log(req.user._id);
+        return Promise.reject(new Error('Некорректный пользователь'));
       }
+      Cards.findByIdAndDelete(req.params.id)
+        .orFail(() => new Error('NotFound'))
+        .then((card) => res.send({ data: card }))
+        .catch((err) => {
+          res.status(400).send(err);
+        });
+    })
+    .catch((err) => {
+      res.status(405).send({ data: err });
     });
 };
 module.exports.likeCard = (req, res) => {

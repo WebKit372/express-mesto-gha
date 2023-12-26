@@ -94,10 +94,11 @@ module.exports.login = (req, res) => {
   const { email, password } = req.body;
   return Users.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'secret');
+      const token = jwt.sign({ _id: user._id }, 'secret', { expiresIn: '7d' });
       res
-        .cookie('name', token, {
+        .cookie('jwt', token, {
           httpOnly: true,
+          maxAge: 3600000 * 24 * 7,
         })
         .end();
     })
@@ -106,4 +107,9 @@ module.exports.login = (req, res) => {
         .status(401)
         .send({ message: err.message });
     });
+};
+module.exports.me = (req, res) => {
+  Users.findById(req.user._id)
+    .then((user) => res.send({ data: user }))
+    .catch(() => res.status(400).send({ message: 'Ойойой' }));
 };
