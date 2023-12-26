@@ -22,11 +22,9 @@ module.exports.deleteCard = (req, res) => {
   Cards.findById(req.params.id)
     .then((deletedCard) => {
       if (deletedCard.owner.toString() !== req.user._id) {
-        console.log(deletedCard.owner.toString());
-        console.log(req.user._id);
         return Promise.reject(new Error('Некорректный пользователь'));
       }
-      Cards.findByIdAndDelete(req.params.id)
+      return Cards.findByIdAndDelete(req.params.id)
         .orFail(() => new Error('NotFound'))
         .then((card) => res.send({ data: card }))
         .catch((err) => {
