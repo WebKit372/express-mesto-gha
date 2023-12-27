@@ -104,7 +104,7 @@ module.exports.login = (req, res, next) => {
           httpOnly: true,
           maxAge: 3600000 * 24 * 7,
         })
-        .end();
+        .send({ message: 'Вы успешно авторизированы' });
     })
     .catch(() => {
       next(new TokenError('Неккоректное имя пользователя или пароль'));
