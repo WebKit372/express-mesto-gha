@@ -13,6 +13,5 @@ module.exports = (req, res, next) => {
     next(new TokenError('Неккоректное имя пользователя или пароль'));
   }
   req.user = payload;
-  res.status(200).send({ message: 'Вы успешно авторизированы' });
   return next();
 };
