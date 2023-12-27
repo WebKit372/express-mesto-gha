@@ -2,7 +2,7 @@ const Cards = require('../models/cards');
 const errorStatus = require('../utils/constants');
 const ValidationError = require('../errors/validation-err');
 const NotFoundError = require('../errors/not-found-err');
-
+const DeleteError = require('../errors/delete-err');
 module.exports.getCards = (req, res, next) => {
   Cards.find({})
     .then((cards) => res.send({ data: cards }))
@@ -22,12 +22,12 @@ module.exports.createCard = (req, res, next) => {
 };
 module.exports.deleteCard = (req, res, next) => {
   Cards.findById(req.params.id)
+    .orFail(() => new NotFoundError('Карточка не найдена'))
     .then((deletedCard) => {
       if (deletedCard.owner.toString() !== req.user._id) {
-        throw new NotFoundError('Недостаточно прав');
+        throw new DeleteError('Недостаточно прав');
       }
       return Cards.findByIdAndDelete(req.params.id)
-        .orFail(() => new NotFoundError('Карточка не найдена'))
         .then((card) => res.send({ data: card }))
         .catch(next);
     })
