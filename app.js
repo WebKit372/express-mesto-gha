@@ -2,9 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
-const errorStatus = require('./utils/constants');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const errorCatcher = require('./middlewares/errorCatcher');
+const NotFoundError = require('./errors/not-found-err');
 
 const app = express();
 const { PORT = 3000 } = process.env;
@@ -18,8 +19,9 @@ app.use(auth);
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.use('/*', (req, res) => {
-  res.status(404).send(errorStatus.wrongWay);
+app.use('/*', (req, res, next) => {
+  next(new NotFoundError('Некорректный путь'));
 });
+app.use(errorCatcher);
 app.listen(PORT, () => {
 });

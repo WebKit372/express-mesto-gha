@@ -1,20 +1,17 @@
 const jwt = require('jsonwebtoken');
+const TokenError = require('../errors/token-err');
 
 module.exports = (req, res, next) => {
   const { jwt: token } = req.cookies;
   if (!token) {
-    return res
-      .status(401)
-      .send({ message: 'Необходима авторизация' });
+    throw new TokenError('Неккоректное имя пользователя или пароль');
   }
   let payload;
   try {
     payload = jwt.verify(token, 'secret');
   } catch {
-    return res
-      .status(401)
-      .send({ message: 'Необходима авторизация' });
+    next(new TokenError('Неккоректное имя пользователя или пароль'));
   }
   req.user = payload;
-  next();
+  return next();
 };
