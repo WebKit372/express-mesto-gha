@@ -3,6 +3,7 @@ const errorStatus = require('../utils/constants');
 const ValidationError = require('../errors/validation-err');
 const NotFoundError = require('../errors/not-found-err');
 const DeleteError = require('../errors/delete-err');
+
 module.exports.getCards = (req, res, next) => {
   Cards.find({})
     .then((cards) => res.send({ data: cards }))
