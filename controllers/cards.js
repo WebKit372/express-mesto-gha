@@ -28,15 +28,14 @@ module.exports.deleteCard = (req, res, next) => {
       if (deletedCard.owner.toString() !== req.user._id) {
         throw new DeleteError('Недостаточно прав');
       }
-      return Cards.findByIdAndDelete(req.params.id)
-        .then((card) => res.send({ data: card }))
-        .catch(next);
+      res.send({ data: deletedCard });
+      deletedCard.deleteOne();
     })
     .catch(next);
 };
 module.exports.likeCard = (req, res, next) => {
   Cards.findByIdAndUpdate(
-    req.params.cardId,
+    req.params.id,
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
@@ -52,7 +51,7 @@ module.exports.likeCard = (req, res, next) => {
 };
 module.exports.dislikeCard = (req, res, next) => {
   Cards.findByIdAndUpdate(
-    req.params.cardId,
+    req.params.id,
     { $pull: { likes: req.user._id } },
     { new: true },
   )

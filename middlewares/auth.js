@@ -4,13 +4,13 @@ const TokenError = require('../errors/token-err');
 module.exports = (req, res, next) => {
   const { jwt: token } = req.cookies;
   if (!token) {
-    throw new TokenError('Неккоректное имя пользователя или пароль');
+    throw new TokenError('Необходима авторизация');
   }
   let payload;
   try {
     payload = jwt.verify(token, 'secret');
   } catch {
-    next(new TokenError('Неккоректное имя пользователя или пароль'));
+    next(new TokenError('Необходима авторизация'));
   }
   req.user = payload;
   return next();

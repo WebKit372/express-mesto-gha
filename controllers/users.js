@@ -4,9 +4,10 @@ const Users = require('../models/users');
 const errorStatus = require('../utils/constants');
 const NotFoundError = require('../errors/not-found-err');
 const ValidationError = require('../errors/validation-err');
-const TokenError = require('../errors/token-err');
 const UniqueError = require('../errors/unique-err');
+require('dotenv').config();
 
+const { JWT_SECRET = 'secret' } = process.env;
 module.exports.getUsers = (req, res, next) => {
   Users.find({})
     .then((users) => res.send({ data: users }))
@@ -102,7 +103,7 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return Users.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'secret', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
       res
         .cookie('jwt', token, {
           httpOnly: true,
@@ -110,9 +111,7 @@ module.exports.login = (req, res, next) => {
         })
         .send({ message: 'Вы успешно авторизированы' });
     })
-    .catch(() => {
-      next(new TokenError('Неккоректное имя пользователя или пароль'));
-    });
+    .catch(next);
 };
 module.exports.me = (req, res, next) => {
   Users.findById(req.user._id)

@@ -12,13 +12,23 @@ const cardSchema = new mongoose.Schema(
     link: {
       type: String,
       required: true,
+      validate: {
+        validator(v) {
+          // eslint-disable-next-line no-useless-escape
+          return /^http(s)?:\/\/(www\.)?[\w\d\-._~:\/?#[\]@!$&'()*+,;=]+#?$/.test(v);
+        },
+        message: 'Некорректный формат URL',
+      },
     },
     owner: {
       type: ObjectId,
       required: true,
+      ref: 'user ',
     },
     likes: [{
       type: ObjectId,
+      ref: 'user ',
+      default: null,
     }],
     createdAt: {
       type: Date,
