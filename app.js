@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const { errors, celebrate, Joi } = require('celebrate');
+const { errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');

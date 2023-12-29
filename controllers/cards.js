@@ -27,11 +27,16 @@ module.exports.deleteCard = (req, res, next) => {
     .then((deletedCard) => {
       if (deletedCard.owner.toString() !== req.user._id) {
         throw new DeleteError('Недостаточно прав');
+      } else {
+        deletedCard.deleteOne()
+          .then(res.send({ data: deletedCard }));
       }
-      res.send({ data: deletedCard });
-      deletedCard.deleteOne();
     })
-    .catch(next);
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
+  // .catch(next);
 };
 module.exports.likeCard = (req, res, next) => {
   Cards.findByIdAndUpdate(
